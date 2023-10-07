@@ -13,13 +13,13 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.listeners;
+package co.purevanilla.mcplugins.xcatch.listeners;
 
-import dev.dediamondpro.xcatch.XCatch;
-import dev.dediamondpro.xcatch.data.HeadingData;
-import dev.dediamondpro.xcatch.data.PendingChangeData;
-import dev.dediamondpro.xcatch.utils.FlagHandler;
-import dev.dediamondpro.xcatch.utils.Utils;
+import co.purevanilla.mcplugins.xcatch.Main;
+import co.purevanilla.mcplugins.xcatch.data.HeadingData;
+import co.purevanilla.mcplugins.xcatch.data.PendingChangeData;
+import co.purevanilla.mcplugins.xcatch.utils.FlagHandler;
+import co.purevanilla.mcplugins.xcatch.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -43,33 +43,33 @@ public class OnBlockBreak implements Listener {
         if (event.getPlayer().hasPermission("xcatch.bypass") || event.getClass() != BlockBreakEvent.class) return;
         Block blockBroken = event.getBlock();
         Location location = blockBroken.getLocation();
-        if (location.getBlockY() > XCatch.config.getInt("max-height")) return;
+        if (location.getBlockY() > Main.config.getInt("max-height")) return;
         float dir = event.getPlayer().getEyeLocation().getYaw();
         if (dir < 0) {
             dir = 360 - Math.abs(dir);
         }
         UUID uuid = event.getPlayer().getUniqueId();
 
-        if (XCatch.rareOres.containsKey(blockBroken.getBlockData().getMaterial()) && data.containsKey(uuid)) {
+        if (Main.rareOres.containsKey(blockBroken.getBlockData().getMaterial()) && data.containsKey(uuid)) {
             if (!blocksMined.containsKey(uuid)) {
                 HashMap<Material, Integer> temp = new HashMap<>();
-                for (Material material : XCatch.rareOres.keySet()) {
+                for (Material material : Main.rareOres.keySet()) {
                     temp.put(material, 0);
                 }
                 blocksMined.put(uuid, temp);
             }
-            int amountFlag = XCatch.rareOres.get(blockBroken.getBlockData().getMaterial());
+            int amountFlag = Main.rareOres.get(blockBroken.getBlockData().getMaterial());
             int amountMined = blocksMined.get(uuid).get(blockBroken.getBlockData().getMaterial()) + 1;
             data.get(uuid).lastRareOre = Instant.now().getEpochSecond();
             blocksMined.get(uuid).put(blockBroken.getBlockData().getMaterial(), amountMined);
-            if (data.get(uuid).changes >= XCatch.config.getInt("changes-for-flag") && amountMined >= amountFlag) {
+            if (data.get(uuid).changes >= Main.config.getInt("changes-for-flag") && amountMined >= amountFlag) {
                 FlagHandler.addFlag(event, false);
             }
-        } else if (!data.containsKey(uuid) || Instant.now().getEpochSecond() - data.get(uuid).lastRareOre > XCatch.config.getInt("grace-period")) {
+        } else if (!data.containsKey(uuid) || Instant.now().getEpochSecond() - data.get(uuid).lastRareOre > Main.config.getInt("grace-period")) {
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
                     for (int z = -1; z <= 1; z++) {
-                        if (XCatch.rareOres.containsKey(event.getPlayer().getWorld().getBlockAt(location.getBlockX() + x,
+                        if (Main.rareOres.containsKey(event.getPlayer().getWorld().getBlockAt(location.getBlockX() + x,
                                 location.getBlockY() + y, location.getBlockZ() + z).getType())) {
                             return;
                         }
@@ -81,7 +81,7 @@ public class OnBlockBreak implements Listener {
                 HeadingData headingData = new HeadingData(dir);
                 headingData.lastChange = Instant.now().getEpochSecond();
                 data.put(uuid, headingData);
-            } else if (Utils.getAngleDistance(dir, data.get(uuid).getAverage()) > XCatch.config.getInt("change-angle")) {
+            } else if (Utils.getAngleDistance(dir, data.get(uuid).getAverage()) > Main.config.getInt("change-angle")) {
                 boolean found = false;
                 if (pendingChanges.containsKey(uuid)) {
                     for (PendingChangeData pendingChange : pendingChanges.get(uuid)) {
@@ -91,7 +91,7 @@ public class OnBlockBreak implements Listener {
                             HeadingData headingData = new HeadingData(dir, pendingChange.dir);
                             headingData.lastChange = Instant.now().getEpochSecond();
                             if (data.containsKey(uuid) &&
-                                    headingData.lastChange - data.get(uuid).lastChange < XCatch.config.getInt("direction-change-retention")) {
+                                    headingData.lastChange - data.get(uuid).lastChange < Main.config.getInt("direction-change-retention")) {
                                 headingData.changes = data.get(uuid).changes + 1;
                             }
                             data.put(uuid, headingData);
@@ -102,7 +102,7 @@ public class OnBlockBreak implements Listener {
                     }
                 }
                 if (!found) {
-                    if (pendingChanges.containsKey(uuid) && pendingChanges.get(uuid).size() >= XCatch.config.getInt("max-pending"))
+                    if (pendingChanges.containsKey(uuid) && pendingChanges.get(uuid).size() >= Main.config.getInt("max-pending"))
                         pendingChanges.get(uuid).remove(0);
                     if (!pendingChanges.containsKey(uuid))
                         pendingChanges.put(uuid, new ArrayList<>());
@@ -110,14 +110,14 @@ public class OnBlockBreak implements Listener {
                 }
             } else {
                 pendingChanges.remove(uuid);
-                if (Instant.now().getEpochSecond() - data.get(uuid).lastChange >= XCatch.config.getInt("direction-change-retention")) {
+                if (Instant.now().getEpochSecond() - data.get(uuid).lastChange >= Main.config.getInt("direction-change-retention")) {
                     data.get(uuid).changes = 0;
                     blocksMined.remove(uuid);
                 }
                 data.get(uuid).headings.add(dir);
             }
 
-            if (FlagHandler.flags.containsKey(uuid) && Instant.now().getEpochSecond() - FlagHandler.flags.get(uuid).lastFlag > XCatch.config.getInt("flag-retention") * 60L) {
+            if (FlagHandler.flags.containsKey(uuid) && Instant.now().getEpochSecond() - FlagHandler.flags.get(uuid).lastFlag > Main.config.getInt("flag-retention") * 60L) {
                 FlagHandler.flags.remove(uuid);
             }
         }

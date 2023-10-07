@@ -13,14 +13,14 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch;
+package co.purevanilla.mcplugins.xcatch;
 
-import dev.dediamondpro.xcatch.commands.XCatchCommand;
-import dev.dediamondpro.xcatch.commands.XCatchTabCompleter;
-import dev.dediamondpro.xcatch.data.PersistentData;
-import dev.dediamondpro.xcatch.gui.ViewGui;
-import dev.dediamondpro.xcatch.listeners.OnBlockBreak;
-import dev.dediamondpro.xcatch.utils.Utils;
+import co.purevanilla.mcplugins.xcatch.commands.XCatchCommand;
+import co.purevanilla.mcplugins.xcatch.commands.XCatchTabCompleter;
+import co.purevanilla.mcplugins.xcatch.data.PersistentData;
+import co.purevanilla.mcplugins.xcatch.gui.ViewGui;
+import co.purevanilla.mcplugins.xcatch.listeners.OnBlockBreak;
+import co.purevanilla.mcplugins.xcatch.utils.Utils;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Material;
@@ -34,8 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-public final class XCatch extends JavaPlugin {
-    public static XCatch INSTANCE;
+public final class Main extends JavaPlugin {
+    public static Main INSTANCE;
     public final Logger logger = getLogger();
     public static FileConfiguration config;
     public static final HashMap<Material, Integer> rareOres = new HashMap<>();

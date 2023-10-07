@@ -13,18 +13,14 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.data;
+package co.purevanilla.mcplugins.xcatch.data;
 
-import java.util.UUID;
-
-public class PlayerData {
-    public UUID uuid;
+public class FlagData {
     public int flags;
-    public int bans;
+    public long lastFlag;
 
-    public PlayerData(UUID uuid, int flags, int bans) {
-        this.uuid = uuid;
+    public FlagData(int flags, long lastFlag) {
         this.flags = flags;
-        this.bans = bans;
+        this.lastFlag = lastFlag;
     }
 }

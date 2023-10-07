@@ -13,16 +13,28 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.data;
+package co.purevanilla.mcplugins.xcatch.data;
 
-import org.bukkit.Location;
+import java.util.ArrayList;
 
-public class PendingChangeData {
-    public Location location;
-    public float dir;
+public class HeadingData {
+    public ArrayList<Float> headings = new ArrayList<>();
+    public int changes = 0;
+    public long lastChange = 0;
+    public long lastRareOre = 0;
 
-    public PendingChangeData(Location location, float dir) {
-        this.location = location;
-        this.dir = dir;
+    public HeadingData(float... headings) {
+        for (float heading : headings)
+            this.headings.add(heading);
+    }
+
+    public double getAverage() {
+        double x = 0;
+        double y = 0;
+        for (float angle : headings) {
+            x += Math.cos(Math.toRadians(angle));
+            y += Math.sin(Math.toRadians(angle));
+        }
+        return Math.toDegrees(Math.atan2(y, x));
     }
 }

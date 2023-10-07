@@ -13,14 +13,14 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.commands;
+package co.purevanilla.mcplugins.xcatch.commands;
 
-import dev.dediamondpro.xcatch.XCatch;
-import dev.dediamondpro.xcatch.data.PersistentData;
-import dev.dediamondpro.xcatch.gui.ViewGui;
-import dev.dediamondpro.xcatch.listeners.OnBlockBreak;
-import dev.dediamondpro.xcatch.utils.FlagHandler;
-import dev.dediamondpro.xcatch.utils.Utils;
+import co.purevanilla.mcplugins.xcatch.listeners.OnBlockBreak;
+import co.purevanilla.mcplugins.xcatch.Main;
+import co.purevanilla.mcplugins.xcatch.data.PersistentData;
+import co.purevanilla.mcplugins.xcatch.gui.ViewGui;
+import co.purevanilla.mcplugins.xcatch.utils.FlagHandler;
+import co.purevanilla.mcplugins.xcatch.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -38,7 +38,7 @@ public class XCatchCommand implements CommandExecutor {
         if (args.length == 0 || args[0].equals("help")) {
             sender.sendMessage(new String[]
                     {
-                            "§8[§cXCatch§8] version " + XCatch.INSTANCE.getDescription().getVersion(),
+                            "§8[§cXCatch§8] version " + Main.INSTANCE.getDescription().getVersion(),
                             "§7/xcatch help, show this help menu.",
                             "§7/xcatch view [<player>], view a player's recent flags and/or bans.",
                             "§7/xcatch clear <player>, clear a player's flags.",
@@ -53,32 +53,32 @@ public class XCatchCommand implements CommandExecutor {
         switch (args[0]) {
             case "debug":
                 if (args.length >= 2) {
-                    Player player = XCatch.INSTANCE.getServer().getPlayer(args[1]);
+                    Player player = Main.INSTANCE.getServer().getPlayer(args[1]);
                     if (player == null) {
                         sender.sendMessage("§8[§cXCatch§8] §cPlayer not found.");
                         return false;
                     }
                     UUID uuid = player.getUniqueId();
                     sender.sendMessage("§8[§cXCatch§8] §7Debug info for §c" + player.getDisplayName());
-                    if (FlagHandler.flags.containsKey(uuid) && XCatch.config.getInt("ban-flags") != 0)
-                        sender.sendMessage("§7Flags: §c" + FlagHandler.flags.get(uuid).flags + "/" + XCatch.config.getInt("ban-flags"));
+                    if (FlagHandler.flags.containsKey(uuid) && Main.config.getInt("ban-flags") != 0)
+                        sender.sendMessage("§7Flags: §c" + FlagHandler.flags.get(uuid).flags + "/" + Main.config.getInt("ban-flags"));
                     else if (FlagHandler.flags.containsKey(uuid))
                         sender.sendMessage("§7Flags: §c" + FlagHandler.flags.get(uuid).flags);
-                    else if (XCatch.config.getInt("ban-flags") != 0)
-                        sender.sendMessage("§7Flags: §c0/" + XCatch.config.getInt("ban-flags"));
+                    else if (Main.config.getInt("ban-flags") != 0)
+                        sender.sendMessage("§7Flags: §c0/" + Main.config.getInt("ban-flags"));
                     else
                         sender.sendMessage("§7Flags: §c0");
                     if (OnBlockBreak.getData().containsKey(uuid))
-                        sender.sendMessage("§7Changes: §c" + OnBlockBreak.getData().get(uuid).changes + "/" + XCatch.config.getInt("changes-for-flag"));
+                        sender.sendMessage("§7Changes: §c" + OnBlockBreak.getData().get(uuid).changes + "/" + Main.config.getInt("changes-for-flag"));
                     else
-                        sender.sendMessage("§7Changes: §c0" + "/" + XCatch.config.getInt("changes-for-flag"));
+                        sender.sendMessage("§7Changes: §c0" + "/" + Main.config.getInt("changes-for-flag"));
                     if (OnBlockBreak.getPendingChanges().containsKey(uuid))
                         sender.sendMessage("§7Pending Changes: §c" + OnBlockBreak.getPendingChanges().get(uuid).size());
                     if (OnBlockBreak.getBlocksMined().containsKey(uuid)) {
                         for (Material material : OnBlockBreak.getBlocksMined().get(uuid).keySet()) {
                             if (OnBlockBreak.getBlocksMined().get(uuid).get(material) == 0) continue;
                             sender.sendMessage("§7" + Utils.capitalize(material.name().toLowerCase().replace("_", " ")) +
-                                    ": §c" + OnBlockBreak.getBlocksMined().get(uuid).get(material) + "/" + XCatch.rareOres.get(material));
+                                    ": §c" + OnBlockBreak.getBlocksMined().get(uuid).get(material) + "/" + Main.rareOres.get(material));
                         }
                     }
                     return true;
@@ -102,15 +102,15 @@ public class XCatchCommand implements CommandExecutor {
                 }
                 return true;
             case "reload":
-                XCatch.INSTANCE.reloadConfig();
-                XCatch.config = XCatch.INSTANCE.getConfig();
-                XCatch.loadConfigParts();
+                Main.INSTANCE.reloadConfig();
+                Main.config = Main.INSTANCE.getConfig();
+                Main.loadConfigParts();
                 sender.sendMessage("§8[§cXCatch§8] §7Config reloaded.");
                 return true;
             case "info":
                 sender.sendMessage(new String[]
                         {
-                                "§8[§cXCatch§8] version " + XCatch.INSTANCE.getDescription().getVersion(),
+                                "§8[§cXCatch§8] version " + Main.INSTANCE.getDescription().getVersion(),
                                 "§7Total X-Ray Flags: §c" + PersistentData.data.totalFlags,
                                 "§7Total X-Ray Bans: §c" + PersistentData.data.totalBans
                         });
@@ -133,7 +133,7 @@ public class XCatchCommand implements CommandExecutor {
                     sender.sendMessage("§8[§cXCatch§8] §cMissing argument <player>.");
                     return false;
                 }
-                Player player = XCatch.INSTANCE.getServer().getPlayer(args[1]);
+                Player player = Main.INSTANCE.getServer().getPlayer(args[1]);
                 if (player == null) {
                     sender.sendMessage("§8[§cXCatch§8] §cPlayer not found.");
                     return false;
@@ -149,7 +149,7 @@ public class XCatchCommand implements CommandExecutor {
                     sender.sendMessage("§8[§cXCatch§8] §cMissing argument <world> <x> <y> <z>.");
                     return false;
                 }
-                World world = XCatch.INSTANCE.getServer().getWorld(args[1]);
+                World world = Main.INSTANCE.getServer().getWorld(args[1]);
                 if (world == null) {
                     sender.sendMessage("§8[§cXCatch§8] §cWorld not found.");
                     return false;

@@ -13,9 +13,9 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.commands;
+package co.purevanilla.mcplugins.xcatch.commands;
 
-import dev.dediamondpro.xcatch.XCatch;
+import co.purevanilla.mcplugins.xcatch.Main;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -74,7 +74,7 @@ public class XCatchTabCompleter implements TabCompleter {
 
     public static List<String> getPlayerList(String filter) {
         ArrayList<String> matchedPlayers = new ArrayList<>();
-        for (Player player : XCatch.INSTANCE.getServer().getOnlinePlayers()) {
+        for (Player player : Main.INSTANCE.getServer().getOnlinePlayers()) {
             String name = player.getName();
             if (StringUtil.startsWithIgnoreCase(name, filter)) {
                 matchedPlayers.add(name);
@@ -88,7 +88,7 @@ public class XCatchTabCompleter implements TabCompleter {
     private List<String> getWorldList(String argument) {
         return StringUtil.copyPartialMatches(
                 argument,
-                XCatch.INSTANCE.getServer().getWorlds().stream().map(World::getName).collect(Collectors.toList()),
+                Main.INSTANCE.getServer().getWorlds().stream().map(World::getName).collect(Collectors.toList()),
                 new ArrayList<>()
         );
     }

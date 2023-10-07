@@ -13,11 +13,11 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.data;
+package co.purevanilla.mcplugins.xcatch.data;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import dev.dediamondpro.xcatch.XCatch;
+import co.purevanilla.mcplugins.xcatch.Main;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -42,7 +42,7 @@ public class PersistentData {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(filePath))))) {
             writer.write(gson.toJson(data));
         } catch (Exception e) {
-            XCatch.INSTANCE.logger.log(Level.SEVERE, "Failed to save XCatch data.");
+            Main.INSTANCE.logger.log(Level.SEVERE, "Failed to save XCatch data.");
         }
     }
 
@@ -52,7 +52,7 @@ public class PersistentData {
             }.getType();
             data = gson.fromJson(reader, type);
         } catch (Exception e) {
-            XCatch.INSTANCE.logger.log(Level.SEVERE, "Failed to load XCatch data.");
+            Main.INSTANCE.logger.log(Level.SEVERE, "Failed to load XCatch data.");
         }
     }
 }

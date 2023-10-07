@@ -13,13 +13,13 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.gui;
+package co.purevanilla.mcplugins.xcatch.gui;
 
-import dev.dediamondpro.xcatch.XCatch;
-import dev.dediamondpro.xcatch.data.ActionData;
-import dev.dediamondpro.xcatch.data.PersistentData;
-import dev.dediamondpro.xcatch.data.PlayerData;
-import dev.dediamondpro.xcatch.utils.Utils;
+import co.purevanilla.mcplugins.xcatch.data.ActionData;
+import co.purevanilla.mcplugins.xcatch.data.PersistentData;
+import co.purevanilla.mcplugins.xcatch.data.PlayerData;
+import co.purevanilla.mcplugins.xcatch.utils.Utils;
+import co.purevanilla.mcplugins.xcatch.Main;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -36,10 +36,10 @@ import java.time.Instant;
 import java.util.*;
 
 public class ViewGui implements Listener {
-    private static final SimpleDateFormat format = new SimpleDateFormat(XCatch.config.getString("date-format"));
+    private static final SimpleDateFormat format = new SimpleDateFormat(Main.config.getString("date-format"));
 
     public static void openAllGui(Player p, int page) {
-        Inventory gui = XCatch.INSTANCE.getServer().createInventory(p, 54, "§8[§cXCatch§8] All Players " + page + "/" +
+        Inventory gui = Main.INSTANCE.getServer().createInventory(p, 54, "§8[§cXCatch§8] All Players " + page + "/" +
                 (int) Math.ceil(PersistentData.data.actions.size() / 45f));
 
         TreeMap<Long, PlayerData> sortedData = new TreeMap<>();
@@ -76,13 +76,13 @@ public class ViewGui implements Listener {
     public static void openPlayerGui(Player p, UUID uuid, String name, int page) {
         ArrayList<ActionData> sortedList = PersistentData.data.actions.get(uuid);
         Collections.sort(sortedList);
-        Inventory gui = XCatch.INSTANCE.getServer().createInventory(p, 54, "§8[§cXCatch§8] " + name + " " + page + "/" +
+        Inventory gui = Main.INSTANCE.getServer().createInventory(p, 54, "§8[§cXCatch§8] " + name + " " + page + "/" +
                 (int) Math.ceil(PersistentData.data.actions.get(uuid).size() / 45f));
 
         for (int i = 45 * (page - 1); i < Math.min(45 * (page), PersistentData.data.actions.get(uuid).size()); i++) {
             ActionData data = PersistentData.data.actions.get(uuid).get(i);
 
-            World world = XCatch.INSTANCE.getServer().getWorld(data.worldUID);
+            World world = Main.INSTANCE.getServer().getWorld(data.worldUID);
             String worldName = world == null ? p.getWorld().getName() : world.getName();
 
             gui.setItem(i - 45 * (page - 1), Utils.createActionDataItem(
@@ -144,11 +144,11 @@ public class ViewGui implements Listener {
                         if (event.getSlot() < 45 && event.getCurrentItem() != null && (event.getCurrentItem().getType() == Material.RED_CONCRETE
                                 || event.getCurrentItem().getType() == Material.YELLOW_CONCRETE)) {
                             Integer actionIndex = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(
-                                    XCatch.INSTANCE.getActionDataKey(), PersistentDataType.INTEGER
+                                    Main.INSTANCE.getActionDataKey(), PersistentDataType.INTEGER
                             );
                             if (actionIndex == null) return;
                             ActionData actionData = PersistentData.data.actions.get(uuid).get(actionIndex);
-                            World world = XCatch.INSTANCE.getServer().getWorld(actionData.worldUID);
+                            World world = Main.INSTANCE.getServer().getWorld(actionData.worldUID);
                             String worldName = world == null ? event.getWhoClicked().getWorld().getName() : world.getName();
                             try {
                                 HashMap<String, String> variables = new HashMap<String, String>() {{
@@ -159,7 +159,7 @@ public class ViewGui implements Listener {
                                     put("{z}", String.valueOf(actionData.z));
                                 }};
                                 event.getWhoClicked().closeInventory();
-                                XCatch.INSTANCE.getServer().dispatchCommand(event.getWhoClicked(), Utils.replaceVariables(XCatch.config.getString("view-click-command"), variables));
+                                Main.INSTANCE.getServer().dispatchCommand(event.getWhoClicked(), Utils.replaceVariables(Main.config.getString("view-click-command"), variables));
                             } catch (NumberFormatException ignored) {
                             }
                         }

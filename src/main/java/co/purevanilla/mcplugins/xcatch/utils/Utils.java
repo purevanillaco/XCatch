@@ -13,13 +13,11 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.utils;
+package co.purevanilla.mcplugins.xcatch.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import github.scarsz.discordsrv.dependencies.jda.api.entities.TextChannel;
-import github.scarsz.discordsrv.util.DiscordUtil;
-import dev.dediamondpro.xcatch.XCatch;
+import co.purevanilla.mcplugins.xcatch.Main;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -55,9 +53,9 @@ public class Utils {
         long length = parseTime(duration);
         if (length != 0)
             expires = new Date(Instant.now().getEpochSecond() * 1000 + length);
-        XCatch.INSTANCE.getServer().getBanList(BanList.Type.NAME).addBan(player.getName(),
-                replaceVariables(XCatch.config.getString("ban-reason"), variables), expires, "XCatch");
-        player.kickPlayer(replaceVariables(XCatch.config.getString("ban-reason"), variables));
+        Main.INSTANCE.getServer().getBanList(BanList.Type.NAME).addBan(player.getName(),
+                replaceVariables(Main.config.getString("ban-reason"), variables), expires, "XCatch");
+        player.kickPlayer(replaceVariables(Main.config.getString("ban-reason"), variables));
     }
 
     public static String capitalize(String string) {
@@ -90,7 +88,7 @@ public class Utils {
             itemMeta.setLore(Arrays.asList(lore));
         itemMeta.setDisplayName(displayName);
         itemMeta.getPersistentDataContainer().set(
-                XCatch.INSTANCE.getActionDataKey(),
+                Main.INSTANCE.getActionDataKey(),
                 PersistentDataType.INTEGER,
                 actionDataIndex
         );
@@ -129,18 +127,6 @@ public class Utils {
         return message;
     }
 
-    private static TextChannel channel = null;
-
-    public static void sendMessage(String message) {
-        if (!XCatch.config.getString("discord-channel").trim().isEmpty() && XCatch.INSTANCE.getServer().getPluginManager().getPlugin("DiscordSRV") != null) {
-            if (channel == null) channel = DiscordUtil.getTextChannelById(XCatch.config.getString("discord-channel"));
-            if (channel != null) DiscordUtil.sendMessage(channel, message);
-            else XCatch.INSTANCE.logger.warning("Could not find the given discord channel!");
-        } else if (!XCatch.config.getString("webhook-url").trim().isEmpty()) {
-            WebhookHandler.sendWebhook(message);
-        }
-    }
-
     public static JsonElement getRequest(String site) {
         try {
             URL url = new URL(site);
@@ -168,8 +154,8 @@ public class Utils {
             JsonElement data = getRequest("https://api.github.com/repos/dediamondpro/XCatch/releases");
             if (data == null) return;
 
-            if (!data.getAsJsonArray().get(0).getAsJsonObject().get("tag_name").getAsString().equals(XCatch.INSTANCE.getDescription().getVersion())) {
-                XCatch.INSTANCE.logger.warning("XCatch is out of date! Please download the latest version at: " +
+            if (!data.getAsJsonArray().get(0).getAsJsonObject().get("tag_name").getAsString().equals(Main.INSTANCE.getDescription().getVersion())) {
+                Main.INSTANCE.logger.warning("XCatch is out of date! Please download the latest version at: " +
                         data.getAsJsonArray().get(0).getAsJsonObject().get("html_url").getAsString());
             }
         });
@@ -196,7 +182,7 @@ public class Utils {
     }
 
     public static void broadcastTextComponent(TextComponent component, String permission) {
-        for (Player player : XCatch.INSTANCE.getServer().getOnlinePlayers()) {
+        for (Player player : Main.INSTANCE.getServer().getOnlinePlayers()) {
             if (!player.hasPermission(permission)) continue;
             player.spigot().sendMessage(component);
         }

@@ -13,9 +13,9 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.utils;
+package co.purevanilla.mcplugins.xcatch.utils;
 
-import dev.dediamondpro.xcatch.XCatch;
+import co.purevanilla.mcplugins.xcatch.Main;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,10 +27,10 @@ public class WebhookHandler {
 
     public static void sendWebhook(String content) {
         try {
-            String username = XCatch.config.getString("webhook-username");
-            String avatar = XCatch.config.getString("webhook-avatar");
+            String username = Main.config.getString("webhook-username");
+            String avatar = Main.config.getString("webhook-avatar");
             byte[] bytes = ("{\"username\":\"" + username + "\",\"avatar_url\":\"" + avatar + "\",\"content\":\"" + content + "\"}").getBytes(StandardCharsets.UTF_8);
-            URL url = new URL(XCatch.config.getString("webhook-url"));
+            URL url = new URL(Main.config.getString("webhook-url"));
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);

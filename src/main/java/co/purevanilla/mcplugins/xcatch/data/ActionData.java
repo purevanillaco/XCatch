@@ -13,7 +13,7 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.data;
+package co.purevanilla.mcplugins.xcatch.data;
 
 import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;

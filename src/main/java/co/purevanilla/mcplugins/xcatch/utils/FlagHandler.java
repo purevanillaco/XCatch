@@ -13,13 +13,13 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package dev.dediamondpro.xcatch.utils;
+package co.purevanilla.mcplugins.xcatch.utils;
 
-import dev.dediamondpro.xcatch.data.ActionData;
-import dev.dediamondpro.xcatch.data.FlagData;
-import dev.dediamondpro.xcatch.listeners.OnBlockBreak;
-import dev.dediamondpro.xcatch.XCatch;
-import dev.dediamondpro.xcatch.data.PersistentData;
+import co.purevanilla.mcplugins.xcatch.listeners.OnBlockBreak;
+import co.purevanilla.mcplugins.xcatch.data.ActionData;
+import co.purevanilla.mcplugins.xcatch.data.FlagData;
+import co.purevanilla.mcplugins.xcatch.Main;
+import co.purevanilla.mcplugins.xcatch.data.PersistentData;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -63,41 +63,37 @@ public class FlagHandler {
             put("{z}", String.valueOf(location.getBlockZ()));
             put("{world}", location.getWorld().getName());
         }};
-        if (XCatch.config.getInt("ban-flags") != 0 && flags.get(uuid).flags >= XCatch.config.getInt("ban-flags")
+        if (Main.config.getInt("ban-flags") != 0 && flags.get(uuid).flags >= Main.config.getInt("ban-flags")
                 && !event.getPlayer().hasPermission("xcatch.noban")) {
-            List<String> durations = XCatch.config.getStringList("ban-durations");
+            List<String> durations = Main.config.getStringList("ban-durations");
             String duration = durations.get((int) Math.min(durations.size() - 1,
                     PersistentData.data.actions.get(uuid).stream().filter((actionData) -> actionData.type.equals(ActionData.ActionType.BAN)).count()));
             variables.put("{duration}", duration.equals("0") ? "ever" : duration);
             Utils.banUser(event.getPlayer(), variables, duration);
-            XCatch.INSTANCE.getServer().broadcast(Utils.replaceVariables(XCatch.config.getString("ban-message"), variables),
+            Main.INSTANCE.getServer().broadcast(Utils.replaceVariables(Main.config.getString("ban-message"), variables),
                     "xcatch.alert");
-            if (XCatch.config.getBoolean("message-ban"))
-                Utils.sendMessage(Utils.replaceVariables(XCatch.config.getString("ban-message-discord"), variables));
             PersistentData.data.actions.get(uuid).add(new ActionData(ActionData.ActionType.BAN, Instant.now().getEpochSecond(), ore, amountMined,
                     location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
             PersistentData.data.totalBans++;
-        } else if (XCatch.config.getInt("alert-flags") != 0 && flags.get(uuid).flags >= XCatch.config.getInt("alert-flags")) {
-            TextComponent component = new TextComponent(Utils.replaceVariables(XCatch.config.getString("alert-message"), variables));
+        } else if (Main.config.getInt("alert-flags") != 0 && flags.get(uuid).flags >= Main.config.getInt("alert-flags")) {
+            TextComponent component = new TextComponent(Utils.replaceVariables(Main.config.getString("alert-message"), variables));
             component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                    Utils.replaceVariables("/" + XCatch.config.getString("alert-click-command"), variables)));
+                    Utils.replaceVariables("/" + Main.config.getString("alert-click-command"), variables)));
             component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§cClick to teleport.").create()));
             Utils.broadcastTextComponent(component, "xcatch.alert");
-            if (XCatch.config.getBoolean("message-alert"))
-                Utils.sendMessage(Utils.replaceVariables(XCatch.config.getString("alert-message-discord"), variables));
             PersistentData.data.actions.get(uuid).add(new ActionData(ActionData.ActionType.FLAG, Instant.now().getEpochSecond(), ore, amountMined,
                     location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         } else // no ban and no alert but still a flag
             PersistentData.data.actions.get(uuid).add(new ActionData(ActionData.ActionType.FLAG, Instant.now().getEpochSecond(), ore, amountMined,
                     location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
-        if (XCatch.commands.containsKey(flags.get(uuid).flags)) {
-            ArrayList<String> commands = XCatch.commands.get(flags.get(uuid).flags);
+        if (Main.commands.containsKey(flags.get(uuid).flags)) {
+            ArrayList<String> commands = Main.commands.get(flags.get(uuid).flags);
             for (String command : commands) {
-                Bukkit.getScheduler().runTask(XCatch.getPlugin(XCatch.class), () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), Utils.replaceVariables(command, variables)));
+                Bukkit.getScheduler().runTask(Main.getPlugin(Main.class), () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), Utils.replaceVariables(command, variables)));
             }
         }
         PersistentData.data.totalFlags++;
-        XCatch.metricFlags++;
+        Main.metricFlags++;
         OnBlockBreak.data.remove(uuid);
         OnBlockBreak.blocksMined.remove(uuid);
     }
