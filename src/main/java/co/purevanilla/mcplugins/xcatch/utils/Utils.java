@@ -15,85 +15,18 @@
 
 package co.purevanilla.mcplugins.xcatch.utils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import co.purevanilla.mcplugins.xcatch.Main;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.BanList;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.persistence.PersistentDataType;
-
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.sql.Date;
-import java.time.Instant;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class Utils {
     public static double getAngleDistance(double alpha, double beta) {
         double phi = Math.abs(beta - alpha) % 360;
         return phi > 180 ? 360 - phi : phi;
-    }
-
-    public static void banUser(Player player, Map<String, String> variables, String duration) {
-        Date expires = null;
-        long length = parseTime(duration);
-        if (length != 0)
-            expires = new Date(Instant.now().getEpochSecond() * 1000 + length);
-        Main.INSTANCE.getServer().getBanList(BanList.Type.NAME).addBan(player.getName(),
-                replaceVariables(Main.config.getString("ban-reason"), variables), expires, "XCatch");
-        player.kickPlayer(replaceVariables(Main.config.getString("ban-reason"), variables));
-    }
-
-    public static String capitalize(String string) {
-        String[] split = string.split(" ");
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String str : split) {
-            stringBuilder.append(str.substring(0, 1).toUpperCase()).append(str.substring(1)).append(" ");
-        }
-        return stringBuilder.toString().trim();
-    }
-
-    public static ItemStack createItem(Material material, String displayName, String... lore) {
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        itemStack.setItemMeta(itemMeta);
-        if (lore != null)
-            itemMeta.setLore(Arrays.asList(lore));
-        itemMeta.setDisplayName(displayName);
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
-    }
-
-    public static ItemStack createActionDataItem(Material material, String displayName, int actionDataIndex, String... lore) {
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        itemStack.setItemMeta(itemMeta);
-        if (lore != null)
-            itemMeta.setLore(Arrays.asList(lore));
-        itemMeta.setDisplayName(displayName);
-        itemMeta.getPersistentDataContainer().set(
-                Main.INSTANCE.getActionDataKey(),
-                PersistentDataType.INTEGER,
-                actionDataIndex
-        );
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
     }
 
     public static UUID getOfflineUUID(String name) {
@@ -104,22 +37,6 @@ public class Utils {
         return null;
     }
 
-    public static String getOfflineName(UUID uuid) {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer.hasPlayedBefore()) {
-            return offlinePlayer.getName();
-        }
-        return null;
-    }
-
-    public static ItemStack createSkull(ItemStack item, UUID id) {
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
-        meta.setOwningPlayer(Bukkit.getOfflinePlayer(id));
-        item.setItemMeta(meta);
-
-        return item;
-    }
-
     public static String replaceVariables(String message, Map<String, String> variables) {
         for (String variable : variables.keySet()) {
             message = message.replace(variable, variables.get(variable));
@@ -127,64 +44,10 @@ public class Utils {
         return message;
     }
 
-    public static JsonElement getRequest(String site) {
-        try {
-            URL url = new URL(site);
-            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            int status = con.getResponseCode();
-            if (status != 200)
-                return null;
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuilder content = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
-            }
-            in.close();
-            JsonParser parser = new JsonParser();
-            return parser.parse(content.toString());
-        } catch (IOException ignored) {
-        }
-        return null;
-    }
-
-    public static void checkForUpdate() {
-        CompletableFuture.runAsync(() -> {
-            JsonElement data = getRequest("https://api.github.com/repos/dediamondpro/XCatch/releases");
-            if (data == null) return;
-
-            if (!data.getAsJsonArray().get(0).getAsJsonObject().get("tag_name").getAsString().equals(Main.INSTANCE.getDescription().getVersion())) {
-                Main.INSTANCE.logger.warning("XCatch is out of date! Please download the latest version at: " +
-                        data.getAsJsonArray().get(0).getAsJsonObject().get("html_url").getAsString());
-            }
-        });
-    }
-
-    public static long parseTime(String input) {
-        long number = Long.parseLong(input.replaceAll("[^0-9]", ""));
-        if (input.endsWith("y")) {
-            return number * 31557600000L;
-        } else if (input.endsWith("mo")) {
-            return number * 2629800000L;
-        } else if (input.endsWith("w")) {
-            return number * 604800017L;
-        } else if (input.endsWith("d")) {
-            return number * 86400000L;
-        } else if (input.endsWith("h")) {
-            return number * 3600000L;
-        } else if (input.endsWith("m")) {
-            return number * 60000L;
-        } else if (input.endsWith("s")) {
-            return number * 1000L;
-        }
-        return number;
-    }
-
     public static void broadcastTextComponent(TextComponent component, String permission) {
         for (Player player : Main.INSTANCE.getServer().getOnlinePlayers()) {
             if (!player.hasPermission(permission)) continue;
-            player.spigot().sendMessage(component);
+            player.sendMessage(component);
         }
     }
 }

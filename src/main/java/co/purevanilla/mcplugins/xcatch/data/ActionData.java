@@ -47,8 +47,6 @@ public class ActionData implements Comparable<ActionData> {
     }
 
     public enum ActionType {
-        @SerializedName("0")
-        BAN,
         @SerializedName("1")
         FLAG
     }

@@ -7,26 +7,6 @@ description: A simple, efficient plugin to catch x-rayers.
 depend:
   - ProtocolLib
 commands:
-  xcatch:
-    description: XCatch base command
-permissions:
-  xcatch.*:
-    description: Gives you all of the XCatch permissions.
-    default: false
-    children:
-      xcatch.alert: true
-      xcatch.bypass: true
-      xcatch.noban: true
-      xcatch.command: true
-  xcatch.alert:
-    default: op
-    description: Gives you the permission to see XCatch alerts.
-  xcatch.bypass:
-    default: false
-    description: Players with this permission bypass all XCatch checks.
-  xcatch.noban:
-    default: false
-    description: XCatch will flag players with this permission as normal, but it won't ban them.
-  xcatch.command:
-    default: op
-    description: Give players with this permission access to the XCatch command.
+  xreset:
+    description: XCatch reset flags
+    permission: xcatch.reset

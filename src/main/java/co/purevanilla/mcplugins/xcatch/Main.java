@@ -16,13 +16,9 @@
 package co.purevanilla.mcplugins.xcatch;
 
 import co.purevanilla.mcplugins.xcatch.commands.XCatchCommand;
-import co.purevanilla.mcplugins.xcatch.commands.XCatchTabCompleter;
 import co.purevanilla.mcplugins.xcatch.data.PersistentData;
-import co.purevanilla.mcplugins.xcatch.gui.ViewGui;
 import co.purevanilla.mcplugins.xcatch.listeners.OnBlockBreak;
 import co.purevanilla.mcplugins.xcatch.utils.Utils;
-import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SingleLineChart;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
@@ -79,20 +76,8 @@ public final class Main extends JavaPlugin {
             PersistentData.loadData(getDataFolder().getAbsolutePath() + "/data.json.gz");
 
         getServer().getPluginManager().registerEvents(new OnBlockBreak(), this);
-        getServer().getPluginManager().registerEvents(new ViewGui(), this);
 
-        getCommand("xcatch").setExecutor(new XCatchCommand());
-        getCommand("xcatch").setTabCompleter(new XCatchTabCompleter());
-        getCommand("xcatch").setPermission("xcatch.command");
-        getCommand("xcatch").setPermissionMessage("§8[§cXCatch§8] §cYou do not have permission to use that command");
-
-        // bstats metrics, can be disabled in global bstats config
-        Metrics metrics = new Metrics(this, 14872);
-        metrics.addCustomChart(new SingleLineChart("flags", () -> {
-            int temp = metricFlags;
-            metricFlags = 0;
-            return temp;
-        }));
+        Objects.requireNonNull(getCommand("xreset")).setExecutor(new XCatchCommand());
 
         logger.info("XCatch has been initialized");
     }
@@ -115,37 +100,6 @@ public final class Main extends JavaPlugin {
                 Material material = Material.getMaterial(ore.toUpperCase());
                 if (material != null)
                     rareOres.put(material, map.get(ore));
-            }
-        }
-
-        commands.clear();
-        ArrayList<HashMap<String, ArrayList<String>>> commandData = (ArrayList<HashMap<String, ArrayList<String>>>) config.get("commands");
-        if (commandData != null) {
-            for (HashMap<String, ArrayList<String>> map : commandData) {
-                String flagCount = map.keySet().stream().findFirst().get();
-                if (flagCount.contains("-")) {
-                    String[] split = flagCount.split("-");
-                    if (split.length != 2) {
-                        return;
-                    }
-                    int startNum = Integer.parseInt(split[0].replaceAll("[^0-9]", ""));
-                    int endNum = Integer.parseInt(split[1].replaceAll("[^0-9]", ""));
-                    for (int i = startNum; i <= endNum; i++) {
-                        if (!commands.containsKey(i))
-                            commands.put(i, map.get(flagCount));
-                        else {
-                            ArrayList<String> newArray = new ArrayList<>(commands.get(i));
-                            newArray.addAll(map.get(flagCount));
-                            commands.put(i, newArray);
-                        }
-                    }
-                } else {
-                    int flags = Integer.parseInt(flagCount.replaceAll("[^0-9]", ""));
-                    if (!commands.containsKey(flags))
-                        commands.put(flags, map.get(flagCount));
-                    else
-                        commands.get(flags).addAll(map.get(flagCount));
-                }
             }
         }
     }

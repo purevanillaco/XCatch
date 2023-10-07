@@ -32,7 +32,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class FlagHandler {
@@ -63,19 +62,7 @@ public class FlagHandler {
             put("{z}", String.valueOf(location.getBlockZ()));
             put("{world}", location.getWorld().getName());
         }};
-        if (Main.config.getInt("ban-flags") != 0 && flags.get(uuid).flags >= Main.config.getInt("ban-flags")
-                && !event.getPlayer().hasPermission("xcatch.noban")) {
-            List<String> durations = Main.config.getStringList("ban-durations");
-            String duration = durations.get((int) Math.min(durations.size() - 1,
-                    PersistentData.data.actions.get(uuid).stream().filter((actionData) -> actionData.type.equals(ActionData.ActionType.BAN)).count()));
-            variables.put("{duration}", duration.equals("0") ? "ever" : duration);
-            Utils.banUser(event.getPlayer(), variables, duration);
-            Main.INSTANCE.getServer().broadcast(Utils.replaceVariables(Main.config.getString("ban-message"), variables),
-                    "xcatch.alert");
-            PersistentData.data.actions.get(uuid).add(new ActionData(ActionData.ActionType.BAN, Instant.now().getEpochSecond(), ore, amountMined,
-                    location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
-            PersistentData.data.totalBans++;
-        } else if (Main.config.getInt("alert-flags") != 0 && flags.get(uuid).flags >= Main.config.getInt("alert-flags")) {
+        if (Main.config.getInt("alert-flags") != 0 && flags.get(uuid).flags >= Main.config.getInt("alert-flags")) {
             TextComponent component = new TextComponent(Utils.replaceVariables(Main.config.getString("alert-message"), variables));
             component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                     Utils.replaceVariables("/" + Main.config.getString("alert-click-command"), variables)));
@@ -83,9 +70,10 @@ public class FlagHandler {
             Utils.broadcastTextComponent(component, "xcatch.alert");
             PersistentData.data.actions.get(uuid).add(new ActionData(ActionData.ActionType.FLAG, Instant.now().getEpochSecond(), ore, amountMined,
                     location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
-        } else // no ban and no alert but still a flag
+        } else {
             PersistentData.data.actions.get(uuid).add(new ActionData(ActionData.ActionType.FLAG, Instant.now().getEpochSecond(), ore, amountMined,
                     location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+        }
         if (Main.commands.containsKey(flags.get(uuid).flags)) {
             ArrayList<String> commands = Main.commands.get(flags.get(uuid).flags);
             for (String command : commands) {
