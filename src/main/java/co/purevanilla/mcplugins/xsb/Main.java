@@ -13,12 +13,14 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package co.purevanilla.mcplugins.xcatch;
+package co.purevanilla.mcplugins.xsb;
 
-import co.purevanilla.mcplugins.xcatch.commands.XCatchCommand;
-import co.purevanilla.mcplugins.xcatch.data.PersistentData;
-import co.purevanilla.mcplugins.xcatch.listeners.OnBlockBreak;
-import co.purevanilla.mcplugins.xcatch.utils.Utils;
+import co.purevanilla.mcplugins.xsb.commands.ForceFlagCmd;
+import co.purevanilla.mcplugins.xsb.commands.GetFlagsCmd;
+import co.purevanilla.mcplugins.xsb.commands.ResetFlagsCmd;
+import co.purevanilla.mcplugins.xsb.data.PersistentData;
+import co.purevanilla.mcplugins.xsb.listeners.OnBlockBreak;
+import co.purevanilla.mcplugins.xsb.listeners.VirtualItems;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,7 +40,7 @@ public final class Main extends JavaPlugin {
     public static final HashMap<Material, Integer> rareOres = new HashMap<>();
     public static final HashMap<Integer, ArrayList<String>> commands = new HashMap<>();
     public static int metricFlags = 0;
-
+    private VirtualItems virtualItemsListener;
     private NamespacedKey actionDataKey;
 
     @Override
@@ -69,22 +71,28 @@ public final class Main extends JavaPlugin {
         config = getConfig();
         loadConfigParts();
 
-        if (config.getBoolean("check-update"))
-            Utils.checkForUpdate();
-
         if (new File(getDataFolder().getAbsolutePath() + "/data.json.gz").exists())
             PersistentData.loadData(getDataFolder().getAbsolutePath() + "/data.json.gz");
 
+        this.virtualItemsListener = new VirtualItems(this);
         getServer().getPluginManager().registerEvents(new OnBlockBreak(), this);
+        getServer().getPluginManager().registerEvents(this.virtualItemsListener, this);
 
-        Objects.requireNonNull(getCommand("xreset")).setExecutor(new XCatchCommand());
+        Objects.requireNonNull(getCommand("xreset")).setExecutor(new ResetFlagsCmd());
+        Objects.requireNonNull(getCommand("xray")).setExecutor(new GetFlagsCmd());
+        Objects.requireNonNull(getCommand("xflag")).setExecutor(new ForceFlagCmd());
 
-        logger.info("XCatch has been initialized");
+        logger.info("XShadowBan has been initialized");
     }
 
     @Override
     public void onDisable() {
         PersistentData.saveData(getDataFolder().getAbsolutePath() + "/data.json.gz");
+        try {
+            this.virtualItemsListener.save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public NamespacedKey getActionDataKey() {

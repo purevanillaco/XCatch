@@ -13,11 +13,11 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package co.purevanilla.mcplugins.xcatch.data;
+package co.purevanilla.mcplugins.xsb.data;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import co.purevanilla.mcplugins.xcatch.Main;
+import co.purevanilla.mcplugins.xsb.Main;
 
 import java.io.*;
 import java.lang.reflect.Type;

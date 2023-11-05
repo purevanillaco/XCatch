@@ -13,13 +13,14 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package co.purevanilla.mcplugins.xcatch.utils;
+package co.purevanilla.mcplugins.xsb.utils;
 
-import co.purevanilla.mcplugins.xcatch.listeners.OnBlockBreak;
-import co.purevanilla.mcplugins.xcatch.data.ActionData;
-import co.purevanilla.mcplugins.xcatch.data.FlagData;
-import co.purevanilla.mcplugins.xcatch.Main;
-import co.purevanilla.mcplugins.xcatch.data.PersistentData;
+import co.purevanilla.mcplugins.xsb.listeners.OnBlockBreak;
+import co.purevanilla.mcplugins.xsb.data.ActionData;
+import co.purevanilla.mcplugins.xsb.data.FlagData;
+import co.purevanilla.mcplugins.xsb.Main;
+import co.purevanilla.mcplugins.xsb.data.PersistentData;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -63,11 +64,7 @@ public class FlagHandler {
             put("{world}", location.getWorld().getName());
         }};
         if (Main.config.getInt("alert-flags") != 0 && flags.get(uuid).flags >= Main.config.getInt("alert-flags")) {
-            TextComponent component = new TextComponent(Utils.replaceVariables(Main.config.getString("alert-message"), variables));
-            component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                    Utils.replaceVariables("/" + Main.config.getString("alert-click-command"), variables)));
-            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§cClick to teleport.").create()));
-            Utils.broadcastTextComponent(component, "xcatch.alert");
+            Utils.broadcastTextComponent(MiniMessage.miniMessage().deserialize(Utils.replaceVariables(Main.config.getString("alert-message"), variables)), "xsb.alert");
             PersistentData.data.actions.get(uuid).add(new ActionData(ActionData.ActionType.FLAG, Instant.now().getEpochSecond(), ore, amountMined,
                     location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         } else {

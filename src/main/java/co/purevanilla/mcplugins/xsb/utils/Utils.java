@@ -13,12 +13,14 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package co.purevanilla.mcplugins.xcatch.utils;
+package co.purevanilla.mcplugins.xsb.utils;
 
-import co.purevanilla.mcplugins.xcatch.Main;
+import co.purevanilla.mcplugins.xsb.Main;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.UUID;
@@ -44,10 +46,11 @@ public class Utils {
         return message;
     }
 
-    public static void broadcastTextComponent(TextComponent component, String permission) {
+    public static void broadcastTextComponent(Component component, String permission) {
         for (Player player : Main.INSTANCE.getServer().getOnlinePlayers()) {
             if (!player.hasPermission(permission)) continue;
             player.sendMessage(component);
+            player.playSound(player.getLocation(), Sound.BLOCK_NETHERITE_BLOCK_PLACE, 1.0F, 0.6F);
         }
     }
 }

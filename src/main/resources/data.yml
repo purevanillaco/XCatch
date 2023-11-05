@@ -1,0 +1,6 @@
+worlds: {}
+#  world:
+#   chunkid:
+#     x|y|z|:
+#       mat: LAPIS_ORE
+#       due: 0

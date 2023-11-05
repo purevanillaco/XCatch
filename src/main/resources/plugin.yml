@@ -1,12 +1,25 @@
-name: XCatch
+name: XShadowBan
 version: '${project.version}'
-main: co.purevanilla.mcplugins.xcatch.Main
+main: co.purevanilla.mcplugins.xsb.Main
 api-version: 1.20
 authors: [ quiquelhappy, DeDiamondPro ]
-description: A simple, efficient plugin to catch x-rayers.
+description: A simple, efficient plugin to shadow ban x-rayers.
 depend:
   - ProtocolLib
+permissions:
+  xsb.notify:
+    description: Get xray notifications
+    default: op
 commands:
+  xflag:
+    usage: "/xflag <player>"
+    description: Forces flags
+    permission: xsb.reset
   xreset:
-    description: XCatch reset flags
-    permission: xcatch.reset
+    usage: "/xreset <player>"
+    description: Reset flags
+    permission: xsb.reset
+  xray:
+    usage: "/xray <player>"
+    description: Get flag count
+    permission: xsb.get

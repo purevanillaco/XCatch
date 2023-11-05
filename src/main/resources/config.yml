@@ -42,18 +42,6 @@ date-format: "dd-MM-yyyy 'at' HH:mm z"
 # +------------------------------------------------------+ #
 ############################################################
 
-# The command executed when you click a flag message
-# Available variables:
-# {player}: the player who got flagged
-# {flags}: amount of flags this player has
-# {ore}: ore the player was mining
-# {amount}: amount of that ore the player has mined
-# {x}: X Coordinate location where the ore was found
-# {y}: Y Coordinate location where the ore was found
-# {z}: Z Coordinate location where the ore was found
-# {world}: The name of the world where the ore was found
-alert-click-command: 'tp {player}'
-
 # The command executed when you click a flag inside the flags gui
 # Available variables:
 # {player}: the player who got flagged
@@ -61,7 +49,7 @@ alert-click-command: 'tp {player}'
 # {y}: Y Coordinate location where the ore was found
 # {z}: Z Coordinate location where the ore was found
 # {world}: The name of the world where the ore was found
-view-click-command: 'tp tp {world} {x} {y} {z}'
+view-click-command: 'tp {world} {x} {y} {z}'
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -81,7 +69,7 @@ view-click-command: 'tp tp {world} {x} {y} {z}'
 # {y}: Y Coordinate location where the ore was found
 # {z}: Z Coordinate location where the ore was found
 # {world}: The name of the world where the ore was found
-alert-message: '§8[§cXCatch§8] §7Flagged §c{player}§7 for potential §cx-ray§7. §c{player}§7 mined §c{amount} {ore}§7. (§c{flags}§7)'
+alert-message: "<click:run_command:'/s {player}'><hover:show_text:'<dark_purple>Click to spectate'><dark_purple>•</dark_purple> <gray>Flagged (<dark_purple>#{flags}</dark_purple>) <dark_purple>{player}</dark_purple> for potential xray. Mined <dark_purple>{amount} {ore}</dark_purple></gray>"
 
 ############################################################
 # +------------------------------------------------------+ #

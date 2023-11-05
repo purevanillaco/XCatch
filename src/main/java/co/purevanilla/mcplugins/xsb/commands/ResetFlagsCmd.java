@@ -13,30 +13,31 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package co.purevanilla.mcplugins.xcatch.commands;
+package co.purevanilla.mcplugins.xsb.commands;
 
-import co.purevanilla.mcplugins.xcatch.data.PersistentData;
-import co.purevanilla.mcplugins.xcatch.utils.Utils;
+import co.purevanilla.mcplugins.xsb.data.PersistentData;
+import co.purevanilla.mcplugins.xsb.utils.Utils;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import java.util.UUID;
 
-public class XCatchCommand implements CommandExecutor {
+public class ResetFlagsCmd implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            sender.sendMessage("§8[§cXCatch§8] §cMissing argument <player>.");
-            return false;
+            sender.sendMessage(MiniMessage.miniMessage().deserialize("<dark_purple>•</dark_purple> <gray>Please, specify a player</gray>"));
+            return true;
         }
         UUID uuid = Utils.getOfflineUUID(args[0]);
         if (uuid == null || !PersistentData.data.actions.containsKey(uuid)) {
-            sender.sendMessage("§8[§cXCatch§8] §cPlayer not found or no data available for player.");
-            return false;
+            sender.sendMessage(MiniMessage.miniMessage().deserialize("<dark_purple>•</dark_purple> <gray>No flag data found</gray>"));
+            return true;
         }
         PersistentData.data.actions.remove(uuid);
-        sender.sendMessage("§8[§cXCatch§8] §cFlags of " + args[0] + " has been cleared.");
+        sender.sendMessage(MiniMessage.miniMessage().deserialize("<dark_purple>•</dark_purple> <gray>Reset flag data for <dark_purple>"+args[0]+"</dark_purple></gray>"));
         return true;
     }
 }

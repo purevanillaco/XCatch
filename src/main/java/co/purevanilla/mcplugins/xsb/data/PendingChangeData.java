@@ -13,14 +13,16 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package co.purevanilla.mcplugins.xcatch.data;
+package co.purevanilla.mcplugins.xsb.data;
 
-public class FlagData {
-    public int flags;
-    public long lastFlag;
+import org.bukkit.Location;
 
-    public FlagData(int flags, long lastFlag) {
-        this.flags = flags;
-        this.lastFlag = lastFlag;
+public class PendingChangeData {
+    public Location location;
+    public float dir;
+
+    public PendingChangeData(Location location, float dir) {
+        this.location = location;
+        this.dir = dir;
     }
 }

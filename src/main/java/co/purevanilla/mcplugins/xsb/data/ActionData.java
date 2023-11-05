@@ -13,7 +13,7 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package co.purevanilla.mcplugins.xcatch.data;
+package co.purevanilla.mcplugins.xsb.data;
 
 import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;

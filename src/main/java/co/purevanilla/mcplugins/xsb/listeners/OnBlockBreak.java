@@ -13,13 +13,13 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-package co.purevanilla.mcplugins.xcatch.listeners;
+package co.purevanilla.mcplugins.xsb.listeners;
 
-import co.purevanilla.mcplugins.xcatch.Main;
-import co.purevanilla.mcplugins.xcatch.data.HeadingData;
-import co.purevanilla.mcplugins.xcatch.data.PendingChangeData;
-import co.purevanilla.mcplugins.xcatch.utils.FlagHandler;
-import co.purevanilla.mcplugins.xcatch.utils.Utils;
+import co.purevanilla.mcplugins.xsb.Main;
+import co.purevanilla.mcplugins.xsb.data.HeadingData;
+import co.purevanilla.mcplugins.xsb.data.PendingChangeData;
+import co.purevanilla.mcplugins.xsb.utils.FlagHandler;
+import co.purevanilla.mcplugins.xsb.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
