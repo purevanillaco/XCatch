@@ -12,17 +12,17 @@ alert-flags: 1
 # Format: MATERIAL: AMOUNT
 # List of allowed materials: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 rare-ores:
-  - ANCIENT_DEBRIS: 8
+  - ANCIENT_DEBRIS: 16
   - EMERALD_ORE: 12
   - DEEPSLATE_EMERALD_ORE: 12
   - DIAMOND_ORE: 16
   - DEEPSLATE_DIAMOND_ORE: 16
   - GOLD_ORE: 24
   - DEEPSLATE_GOLD_ORE: 24
-  - IRON_ORE: 32
-  - DEEPSLATE_IRON_ORE: 32
-  - REDSTONE_ORE: 32
-  - DEEPSLATE_REDSTONE_ORE: 32
+  - IRON_ORE: 64
+  - DEEPSLATE_IRON_ORE: 64
+  - REDSTONE_ORE: 64
+  - DEEPSLATE_REDSTONE_ORE: 64
   - LAPIS_ORE: 32
   - DEEPSLATE_LAPIS_ORE: 32
   - COPPER_ORE: 48
@@ -100,4 +100,7 @@ grace-period: 1
 
 # How much time a flag is kept for banning the player or alerting players with the 'xcatch.alert' permission in minutes
 # This does not affect the flags in the /xcatch view
-flag-retention: 30
+flag-retention: 90
+
+# How long until the block reappears
+block-retention: 10080
