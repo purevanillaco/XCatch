@@ -6,7 +6,7 @@
 
     <groupId>co.purevanilla</groupId>
     <artifactId>XSB</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.2</version>
     <packaging>jar</packaging>
 
     <name>XSB</name>
