@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public class ForceFlagCmd implements CommandExecutor {
@@ -23,10 +24,10 @@ public class ForceFlagCmd implements CommandExecutor {
             return true;
         }
         if(!FlagHandler.flags.containsKey(uuid)){
-            FlagHandler.flags.put(uuid, new FlagData(1, System.currentTimeMillis()));
+            FlagHandler.flags.put(uuid, new FlagData(1, Instant.now().getEpochSecond()));
         } else {
-            FlagHandler.flags.get(uuid).flags=1;
-            FlagHandler.flags.get(uuid).lastFlag=System.currentTimeMillis();
+            FlagHandler.flags.get(uuid).flags+=1;
+            FlagHandler.flags.get(uuid).lastFlag= Instant.now().getEpochSecond();
         }
         sender.sendMessage(MiniMessage.miniMessage().deserialize("<dark_purple>•</dark_purple> <gray>Player <dark_purple>"+args[0]+"</dark_purple> has been flagged</gray>"));
         return true;
