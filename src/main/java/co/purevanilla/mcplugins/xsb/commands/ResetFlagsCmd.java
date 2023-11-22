@@ -16,6 +16,7 @@
 package co.purevanilla.mcplugins.xsb.commands;
 
 import co.purevanilla.mcplugins.xsb.data.PersistentData;
+import co.purevanilla.mcplugins.xsb.utils.FlagHandler;
 import co.purevanilla.mcplugins.xsb.utils.Utils;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
@@ -32,11 +33,12 @@ public class ResetFlagsCmd implements CommandExecutor {
             return true;
         }
         UUID uuid = Utils.getOfflineUUID(args[0]);
-        if (uuid == null || !PersistentData.data.actions.containsKey(uuid)) {
+        if (uuid == null || !FlagHandler.flags.containsKey(uuid)) {
             sender.sendMessage(MiniMessage.miniMessage().deserialize("<dark_purple>•</dark_purple> <gray>No flag data found</gray>"));
             return true;
         }
-        PersistentData.data.actions.remove(uuid);
+        FlagHandler.flags.get(uuid).lastFlag=0;
+        FlagHandler.flags.get(uuid).flags=0;
         sender.sendMessage(MiniMessage.miniMessage().deserialize("<dark_purple>•</dark_purple> <gray>Reset flag data for <dark_purple>"+args[0]+"</dark_purple></gray>"));
         return true;
     }
