@@ -22,6 +22,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
@@ -52,5 +54,13 @@ public class Utils {
             player.sendMessage(component);
             player.playSound(player.getLocation(), Sound.BLOCK_NETHERITE_BLOCK_PLACE, 1.0F, 0.6F);
         }
+    }
+
+    public static boolean isFlagExpired(long time){
+        return Instant.now().getEpochSecond()-time > Main.config.getLong("flag-retention")*60;
+    }
+
+    public static long blockReappearDelay(){
+        return Main.config.getLong("block-retention")*60;
     }
 }

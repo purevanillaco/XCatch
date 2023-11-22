@@ -4,6 +4,7 @@ import co.purevanilla.mcplugins.xsb.Main;
 import co.purevanilla.mcplugins.xsb.data.FlagData;
 import co.purevanilla.mcplugins.xsb.utils.FlagHandler;
 import co.purevanilla.mcplugins.xsb.data.XrayedBlock;
+import co.purevanilla.mcplugins.xsb.utils.Utils;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,6 +28,7 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 
 public class VirtualItems implements Listener {
@@ -117,7 +119,9 @@ public class VirtualItems implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
         @Nullable FlagData data = FlagHandler.flags.get(event.getPlayer().getUniqueId());
-        if(Main.rareOres.containsKey(event.getBlock().getType()) && data!=null && data.flags>=1 && event.isDropItems()){
+        if(data==null) return;
+        boolean shouldNerf = data.flags>=1 && !Utils.isFlagExpired(data.lastFlag);
+        if(Main.rareOres.containsKey(event.getBlock().getType()) && shouldNerf && event.isDropItems()){
             final Location location = event.getBlock().getLocation();
 
             Collection<ItemStack> fakeDrops =event.getBlock().getDrops(event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer());
@@ -137,7 +141,7 @@ public class VirtualItems implements Listener {
             }
 
             long key = location.getChunk().getChunkKey();
-            XrayedBlock block = new XrayedBlock(event.getBlock().getType(), event.getBlock().getWorld().getName(), event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ(), System.currentTimeMillis()+1000*3600*4);
+            XrayedBlock block = new XrayedBlock(event.getBlock().getType(), event.getBlock().getWorld().getName(), event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ(), System.currentTimeMillis()+1000* Utils.blockReappearDelay());
             if(xrayed.containsKey(key)){
                 xrayed.get(key).add(block);
             } else {
@@ -220,6 +224,16 @@ public class VirtualItems implements Listener {
         if(virtualEntities.contains(orb.getUniqueId())){
             event.getExperienceOrb().setExperience(0);
             virtualEntities.remove(orb.getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public void onHopper(InventoryPickupItemEvent event){
+        Item item = event.getItem();
+        if(virtualEntities.contains(item.getUniqueId())){
+            virtualEntities.remove(item.getUniqueId());
+            event.setCancelled(true);
+            item.remove();
         }
     }
 
